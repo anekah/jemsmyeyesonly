@@ -988,12 +988,10 @@ $("welcomeClose").onclick = $("welcomeOk").onclick = $("welcomeBackdrop").onclic
   const qp = new URLSearchParams(location.search);
   if(qp.get("key")){ state.key = qp.get("key").trim(); store.set("jems_tmdb_key", state.key); history.replaceState(null, "", location.pathname) }
   if(location.protocol.startsWith("http")){
-    try{
-      const probe = fetch("/api/tmdb?path=" + encodeURIComponent("/configuration"), {cache:"no-store"});
-      const timeout = new Promise(resolve => setTimeout(() => resolve(null), 3000));
-      const r = await Promise.race([probe, timeout]);
-      state.proxy = !!r && (r.headers.get("content-type") || "").toLowerCase().includes("json");
-    }catch{ state.proxy = false }
+    state.proxy = true;
+    fetch("/api/tmdb?path=" + encodeURIComponent("/configuration"), {cache:"no-store"})
+      .then(r => { if(!r.ok && !(r.headers.get("content-type") || "").toLowerCase().includes("json")) state.proxy = false })
+      .catch(() => { state.proxy = false });
   }
   setView("home");
   showWelcomeOnce();
