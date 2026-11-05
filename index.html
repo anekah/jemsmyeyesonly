@@ -739,9 +739,16 @@ function showEpisodePicker(item){
   const list = seasons.length ? seasons.map(s => s.season_number) : Array.from({length: item.number_of_seasons || 1}, (_, i) => i + 1);
   picker.innerHTML = `<label for="seasonSelect">Select season and episode</label><div class="episode-controls"><select id="seasonSelect">${list.map(n => `<option value="${n}">Season ${n}</option>`).join("")}</select><select id="episodeSelect"><option value="1">Episode 1</option></select><button class="primary-button btn-sm" id="playEpisode">${playIcon} Play</button></div>`;
   const season = $("seasonSelect"), episode = $("episodeSelect");
+  let request = 0;
   async function fill(n){
-    try{ const d = await api(`/tv/${item.id}/season/${n}`); episode.innerHTML = (d.episodes || []).map(ep => `<option value="${ep.episode_number}">Episode ${ep.episode_number}${ep.name ? ": " + escapeHtml(ep.name) : ""}</option>`).join("") || '<option value="1">Episode 1</option>' }
-    catch{ episode.innerHTML = '<option value="1">Episode 1</option>' }
+    const current = ++request;
+    try{
+      const d = await api(`/tv/${item.id}/season/${n}`);
+      if(current !== request) return;
+      episode.innerHTML = (d.episodes || []).map(ep => `<option value="${ep.episode_number}">Episode ${ep.episode_number}${ep.name ? ": " + escapeHtml(ep.name) : ""}</option>`).join("") || '<option value="1">Episode 1</option>';
+    }catch{
+      if(current === request) episode.innerHTML = '<option value="1">Episode 1</option>';
+    }
   }
   season.onchange = () => fill(season.value); fill(list[0]);
   $("playEpisode").onclick = () => play(item.id, "tv", Number(season.value), Number(episode.value), titleOf(item), item);
