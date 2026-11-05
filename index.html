@@ -210,6 +210,10 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
 .credit{width:100%;margin-top:6px!important;padding-top:18px;border-top:1px solid #15151a;text-align:center;font:400 12.5px var(--mono)!important;color:#9a98a2!important}
 .heart{width:14px;height:14px;fill:#ff6b8b;vertical-align:-2px;margin-right:7px}
 
+.welcome-card{width:min(330px,100%);padding:36px 26px 24px;border-radius:22px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.welcome-heart{width:42px;height:42px;fill:#ff6b8b;animation:beat 1.6s ease-in-out .4s 2}
+.welcome-text{margin:0;font:800 21px/1.25 var(--sans);letter-spacing:-.5px;max-width:15ch}
+@keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.18)}60%{transform:scale(1)}}
 .loader{width:22px;height:22px;border:2px solid #333;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .toast{position:fixed;z-index:90;bottom:calc(var(--tabbar-h) + 22px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,20px);color:#fff;padding:12px 20px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
@@ -419,6 +423,15 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
     <p class="player-caption">Video not loading? Try another server, or turn the pop-up blocker off if the player won't start.</p>
   </div>
 
+  <div class="modal hidden" id="welcomeModal" role="dialog" aria-modal="true" aria-labelledby="welcomeText">
+    <div class="modal-backdrop" id="welcomeBackdrop"></div>
+    <div class="sheet welcome-card">
+      <button class="close-button" id="welcomeClose" aria-label="Close">&times;</button>
+      <svg class="welcome-heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 4.5 6.4 4.5c2.1 0 3.8 1.2 5.6 3.4 1.8-2.2 3.5-3.4 5.6-3.4 3.7 0 5.5 3.9 4 7.3C19.5 16.4 12 21 12 21z"/></svg>
+      <p class="welcome-text" id="welcomeText">Made with love by Anika to Jemi</p>
+      <button class="primary-button btn-sm" id="welcomeOk">Enter the site</button>
+    </div>
+  </div>
   <div class="toast glass" id="toast" role="status" aria-live="polite"></div>
 
   <script>
@@ -875,7 +888,7 @@ function closePlayer(){
 }
 
 /* Modals and panels */
-const modals = ["playerModal", "detailModal"];
+const modals = ["playerModal", "welcomeModal", "detailModal"];
 let lastFocus = null;
 function syncLock(){ document.body.classList.toggle("locked", modals.some(id => !$(id).classList.contains("hidden"))) }
 function openModal(id){ lastFocus = document.activeElement; $(id).classList.remove("hidden"); closeSearch(); syncLock() }
@@ -921,6 +934,7 @@ document.addEventListener("click", e => {
 document.addEventListener("keydown", e => {
   if(e.key === "Escape"){
     if(!$("playerModal").classList.contains("hidden")) closePlayer();
+    else if(!$("welcomeModal").classList.contains("hidden")) closeWelcome();
     else if(!$("detailModal").classList.contains("hidden")) closeModal("detailModal");
     else closeSearch();
   }
@@ -955,6 +969,14 @@ $("loadMore").onclick = () => { state.page++; loadBrowse(true) };
 
 liquidGlass($("tabbar"), {bezel:20});
 liquidGlass($("toast"), {bezel:14});
+/* First-visit welcome note: shows once, then remembers in this browser. */
+function closeWelcome(){ store.set("jems_welcome_seen", "1"); closeModal("welcomeModal") }
+function showWelcomeOnce(){
+  if(store.get("jems_welcome_seen", "") === "1") return;
+  setTimeout(() => { openModal("welcomeModal"); $("welcomeOk").focus({preventScroll:true}) }, 600);
+}
+$("welcomeClose").onclick = $("welcomeOk").onclick = $("welcomeBackdrop").onclick = closeWelcome;
+
 (async function init(){
   const qp = new URLSearchParams(location.search);
   if(qp.get("key")){ state.key = qp.get("key").trim(); store.set("jems_tmdb_key", state.key); history.replaceState(null, "", location.pathname) }
@@ -965,6 +987,7 @@ liquidGlass($("toast"), {bezel:14});
     }catch{ state.proxy = false }
   }
   setView("home");
+  showWelcomeOnce();
 })();
   </script>
 </body>
