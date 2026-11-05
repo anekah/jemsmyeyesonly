@@ -441,7 +441,7 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
 function liquidGlass(el, opts = {}){
   const o = Object.assign({bezel:16, strength:1, blur:5, saturate:1.8, brightness:1.05}, opts);
   const ua = navigator.userAgent;
-  const supported = /Chrom(e|ium)\//.test(ua) && !/CriOS|FxiOS|OPiOS/.test(ua) && !!(window.CSS && CSS.supports("backdrop-filter", "url(#a)")) && typeof ResizeObserver === "function";
+  const supported = /Chrom(e|ium)\//.test(ua) && !/CriOS|FxiOS|OPiOS/.test(ua) && !!(window.CSS && typeof CSS.supports === "function" && CSS.supports("backdrop-filter", "url(#a)")) && typeof ResizeObserver === "function";
   if(!supported){ el.classList.add("lg-fallback"); return {supported:false, refresh(){}, destroy(){ el.classList.remove("lg-fallback") }} }
   const NS = "http://www.w3.org/2000/svg";
   let svg = document.getElementById("lgDefs");
@@ -989,8 +989,10 @@ $("welcomeClose").onclick = $("welcomeOk").onclick = $("welcomeBackdrop").onclic
   if(qp.get("key")){ state.key = qp.get("key").trim(); store.set("jems_tmdb_key", state.key); history.replaceState(null, "", location.pathname) }
   if(location.protocol.startsWith("http")){
     try{
-      const r = await fetch("/api/tmdb?path=" + encodeURIComponent("/configuration"), {cache:"no-store"});
-      state.proxy = (r.headers.get("content-type") || "").toLowerCase().includes("json");
+      const probe = fetch("/api/tmdb?path=" + encodeURIComponent("/configuration"), {cache:"no-store"});
+      const timeout = new Promise(resolve => setTimeout(() => resolve(null), 3000));
+      const r = await Promise.race([probe, timeout]);
+      state.proxy = !!r && (r.headers.get("content-type") || "").toLowerCase().includes("json");
     }catch{ state.proxy = false }
   }
   setView("home");
