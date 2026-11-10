@@ -17,7 +17,7 @@
   --text:#f7f7f8; --muted:#9999a3; --faint:#777782;
   --line:rgba(255,255,255,.11); --line-strong:rgba(255,255,255,.2);
   --accent:#48e6a2; --purple:#b78cff; --gold:#ffc928;
-  --gutter:5.2%; --topbar-h:62px; --tabbar-h:84px;
+  --gutter:5.2%; --topbar-h:62px; --tabbar-h:64px;
   --sans:Roboto,Arial,sans-serif; --mono:'Roboto Mono',ui-monospace,Menlo,monospace;
 }
 *{box-sizing:border-box}
@@ -130,10 +130,12 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
 .footer-note{width:100%;font-size:11px!important;color:#6d6b75!important}
 
 /* Mobile tab bar */
-.mobile-tabbar{position:fixed;z-index:40;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));height:62px;padding:5px;display:flex;justify-content:space-around;align-items:center;border-radius:31px}
-.mobile-tab{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:0;border-radius:26px;color:#b4b3bd;font-size:11.5px;font-weight:500;padding:0;transition:background .2s,color .2s}
-.mobile-tab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.mobile-tab.active{color:#fff;font-weight:700;background:rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+.mobile-tabbar{position:fixed;z-index:40;left:0;right:0;bottom:0;height:calc(var(--tabbar-h) + env(safe-area-inset-bottom));padding:0 2px env(safe-area-inset-bottom);display:flex;align-items:stretch;background:#000;border-top:1px solid rgba(255,255,255,.12)}
+.mobile-tab{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:none;border:0;color:#777782;font-size:12px;font-weight:500;padding:0;-webkit-tap-highlight-color:transparent;transition:color .15s}
+.mobile-tab svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.mobile-tab span{white-space:nowrap}
+.mobile-tab.active{color:#fff;font-weight:700}
+.mobile-tab.active svg{stroke-width:2}
 
 /* Modals */
 .modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px}
@@ -216,12 +218,9 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
 @keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.18)}60%{transform:scale(1)}}
 .loader{width:22px;height:22px;border:2px solid #333;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;z-index:90;bottom:calc(var(--tabbar-h) + 22px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,20px);color:#fff;padding:12px 20px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
+.toast{position:fixed;z-index:90;bottom:calc(var(--tabbar-h) + 22px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,20px);background:#f2f2f2;color:#111;padding:11px 18px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* Liquid glass surface. The refraction itself is applied by liquidGlass() in the script. */
-.glass{background:rgba(22,22,28,.42);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(255,255,255,.07),inset 0 0 18px rgba(255,255,255,.04),0 12px 36px rgba(0,0,0,.55)}
-.glass.lg-fallback{background:rgba(24,24,30,.58);backdrop-filter:blur(20px) saturate(1.7);-webkit-backdrop-filter:blur(20px) saturate(1.7)}
 
 @media(max-width:400px){
   .brand-name{font-size:15.5px}
@@ -231,6 +230,42 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
 }
 @media(max-width:350px){.history-head{display:none}}
 
+
+/* Hero + Continue Watching */
+.hero{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:clamp(400px,98vw,460px);padding:0 18px 34px;border-bottom:1px solid var(--line);overflow:hidden;background:#0b0b0e}
+.hero.loading{background:linear-gradient(110deg,#0c0c0f 30%,#15151a 50%,#0c0c0f 70%);background-size:200% 100%;animation:heroShine 1.4s linear infinite}
+@keyframes heroShine{to{background-position:-200% 0}}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center 20%;filter:brightness(.55)}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.35) 40%,rgba(0,0,0,.94) 100%)}
+.hero-body{position:relative;z-index:2;max-width:720px}
+.hero-tags{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.hero-badge{background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:5px 10px;font:600 10.5px/1.2 var(--mono);letter-spacing:1.4px;text-transform:uppercase}
+.hero-score{font:600 14px var(--mono);color:var(--gold)}
+.hero-title{margin:0 0 10px;font:700 clamp(32px,9.2vw,40px)/1.04 var(--sans);letter-spacing:-1px;overflow-wrap:anywhere}
+.hero-meta{margin:0 0 12px;font:400 13px var(--mono);color:#c4c4cc}
+.hero-desc{margin:0 0 20px;font:300 14.5px/1.5 var(--sans);color:#c9c9d1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hero-actions{display:flex;gap:10px;flex-wrap:nowrap}
+.hero-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:12px;border:1px solid var(--line-strong);background:rgba(18,18,22,.9);color:#fff;font:600 14px var(--sans);white-space:nowrap}
+.hero-btn svg{width:17px;height:17px;flex-shrink:0}
+.hero-btn.primary{background:#fff;color:#000;border-color:#fff}
+.hero-btn.primary svg{fill:currentColor}
+.hero-btn:not(.primary) svg{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cw-section{padding-top:30px}
+.cw-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cw-head h2{margin:0;font:700 22px/1.2 var(--sans);letter-spacing:-.4px}
+.cw-icon{width:26px;height:26px;fill:none;stroke:#ff4d6d;stroke-width:1.8;stroke-linejoin:round}
+.cw-icon path{fill:#ff4d6d;stroke:none}
+.cw-link{background:none;border:0;padding:0;color:#8e8e99;font:500 15px var(--sans)}
+.cw-subtitle{margin:6px 0 18px;font:400 15px/1.4 var(--sans);color:#9a9aa5}
+.cw-card{position:relative;flex:0 0 clamp(168px,46vw,200px);scroll-snap-align:start;cursor:pointer;border-radius:12px}
+.cw-thumb{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#121216}
+.cw-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.cw-thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 40%,rgba(0,0,0,.3))}
+.cw-badge{position:absolute;z-index:2;top:8px;left:8px;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:3px 7px;font:600 10px/1.3 var(--mono);letter-spacing:.6px}
+.cw-remove{position:absolute;z-index:3;top:7px;right:7px;width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.72);color:#fff;font-size:17px;line-height:1;display:grid;place-items:center;padding:0}
+.cw-title{margin:9px 2px 2px;font:700 14.5px/1.3 var(--sans);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cw-sub{margin:0 2px;font:400 11.5px var(--mono);color:#8e8e99}
+@media(max-width:380px){.hero-btn{padding:0 12px;font-size:13px;gap:6px}.hero-actions{gap:8px}}
 @media(min-width:761px){
   :root{--topbar-h:76px;--gutter:4.4%}
   body{padding-bottom:0}
@@ -277,6 +312,12 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
   .player-stage{border:1px solid var(--line);border-radius:16px}
   .player-heading h2{font-size:19px}
   .embed-option-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .hero{min-height:clamp(440px,46vw,640px);padding:0 var(--gutter) 56px}
+  .hero:after{background:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.35) 55%,rgba(0,0,0,.1) 100%),linear-gradient(180deg,transparent 50%,rgba(0,0,0,.9) 100%)}
+  .hero-title{font-size:clamp(46px,4.6vw,68px)}
+  .hero-desc{font-size:16.5px;-webkit-line-clamp:3}
+  .cw-card{flex-basis:clamp(220px,17vw,290px)}
+  .cw-head h2{font-size:26px}
   .modal{padding:24px}
 }
 @media(prefers-reduced-motion:reduce){
@@ -292,6 +333,7 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
       <button class="nav-link" data-view="movies">Movies</button>
       <button class="nav-link" data-view="tv">TV</button>
       <button class="nav-link" data-view="trending">Trending</button>
+      <button class="nav-link" data-view="anime">Anime</button>
       <button class="nav-link" data-view="watchlist">My list</button>
     </nav>
     <div class="header-actions">
@@ -314,6 +356,16 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
 
   <main>
     <div id="homeView">
+      <section class="hero loading" id="hero" aria-label="Featured film"></section>
+      <section class="content-section cw-section hidden" id="cwSection">
+        <div class="cw-head">
+          <svg class="cw-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M10 8.5v7l6-3.5z"/></svg>
+          <h2>Continue Watching</h2>
+          <button class="cw-link" data-action="view-history">History <span aria-hidden="true">&rarr;</span></button>
+        </div>
+        <p class="cw-subtitle">Pick up right where you left off</p>
+        <div class="shelf-track" id="cwGrid"></div>
+      </section>
       <section class="content-section">
         <div class="section-heading">
           <div class="heading-copy"><h2>Trending Now <span class="count-badge" id="trendingCount">16</span></h2><p class="section-subtitle">Top cinema and television streams today</p></div>
@@ -364,11 +416,12 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
     <p class="credit"><svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 4.5 6.4 4.5c2.1 0 3.8 1.2 5.6 3.4 1.8-2.2 3.5-3.4 5.6-3.4 3.7 0 5.5 3.9 4 7.3C19.5 16.4 12 21 12 21z"/></svg>Made with love by Anika to Jemi</p>
   </footer>
 
-  <nav class="mobile-tabbar glass" id="tabbar" aria-label="Mobile navigation">
+  <nav class="mobile-tabbar" id="tabbar" aria-label="Mobile navigation">
     <button class="mobile-tab active" data-view="home"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
     <button class="mobile-tab" data-view="movies"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4m-4 6h4m10-6h4m-4 6h4"/></svg><span>Movies</span></button>
     <button class="mobile-tab" data-view="tv"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="m8 2 4 5 4-5"/></svg><span>TV</span></button>
-    <button class="mobile-tab" data-view="trending"><svg viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8zM19 16l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/></svg><span>Trending</span></button>
+    <button class="mobile-tab" data-view="trending"><svg viewBox="0 0 24 24"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg><span>Trending</span></button>
+    <button class="mobile-tab" data-view="anime"><svg viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8zM19 16l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/></svg><span>Anime</span></button>
     <button class="mobile-tab" data-view="watchlist"><svg viewBox="0 0 24 24"><path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-3.8L6 21z"/></svg><span>My list</span></button>
   </nav>
 
@@ -432,87 +485,9 @@ footer p{margin:0;font-size:12.5px;color:#8d8b95}
       <button class="primary-button btn-sm" id="welcomeOk">Enter the site</button>
     </div>
   </div>
-  <div class="toast glass" id="toast" role="status" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
-/* Liquid glass: bends whatever is behind an element along its rim (Chromium).
-   Safari and Firefox can't run SVG backdrop filters, so they get a frosted blur instead.
-   API: const g = liquidGlass(el); g.supported, g.refresh(), g.destroy() */
-function liquidGlass(el, opts = {}){
-  const o = Object.assign({bezel:16, strength:1, blur:5, saturate:1.8, brightness:1.05}, opts);
-  const ua = navigator.userAgent;
-  const supported = /Chrom(e|ium)\//.test(ua) && !/CriOS|FxiOS|OPiOS/.test(ua) && !!(window.CSS && CSS.supports("backdrop-filter", "url(#a)"));
-  if(!supported){ el.classList.add("lg-fallback"); return {supported:false, refresh(){}, destroy(){ el.classList.remove("lg-fallback") }} }
-  const NS = "http://www.w3.org/2000/svg";
-  let svg = document.getElementById("lgDefs");
-  if(!svg){
-    svg = document.createElementNS(NS, "svg");
-    svg.id = "lgDefs"; svg.setAttribute("aria-hidden", "true");
-    svg.style.cssText = "position:absolute;width:0;height:0;overflow:hidden;pointer-events:none";
-    svg.appendChild(document.createElementNS(NS, "defs")); document.body.appendChild(svg);
-  }
-  const defs = svg.firstChild, id = "lg" + (liquidGlass.n = (liquidGlass.n || 0) + 1);
-  let filter = null, timer = 0, lastKey = "";
-  function displacementMap(w, h, r, b){
-    const c = document.createElement("canvas"); c.width = w; c.height = h;
-    const ctx = c.getContext("2d"), img = ctx.createImageData(w, h), d = img.data;
-    const hx = w / 2, hy = h / 2, ix = hx - r, iy = hy - r;
-    for(let y = 0; y < h; y++){
-      for(let x = 0; x < w; x++){
-        const px = x + .5 - hx, py = y + .5 - hy;
-        const qx = Math.abs(px) - ix, qy = Math.abs(py) - iy;
-        const ox = Math.max(qx, 0), oy = Math.max(qy, 0), len = Math.hypot(ox, oy);
-        const inside = r - (len + Math.min(Math.max(qx, qy), 0));
-        let vx = 0, vy = 0;
-        if(inside < b){
-          let nx, ny;
-          if(len > 0){ nx = Math.sign(px) * ox / len; ny = Math.sign(py) * oy / len }
-          else if(qx > qy){ nx = Math.sign(px) || 1; ny = 0 }
-          else { nx = 0; ny = Math.sign(py) || 1 }
-          const t = Math.max(0, 1 - inside / b), mag = t * t * o.strength;
-          vx = -nx * mag; vy = -ny * mag;
-        }
-        const i = (y * w + x) * 4;
-        d[i] = 128 + 127 * vx; d[i + 1] = 128 + 127 * vy; d[i + 2] = 128; d[i + 3] = 255;
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-    return c.toDataURL();
-  }
-  function refresh(){
-    const rect = el.getBoundingClientRect(), w = Math.round(rect.width), h = Math.round(rect.height);
-    if(!w || !h) return;
-    const raw = getComputedStyle(el).borderTopLeftRadius;
-    let r = raw.endsWith("%") ? parseFloat(raw) / 100 * Math.min(w, h) : parseFloat(raw) || 0;
-    r = Math.min(r, Math.min(w, h) / 2);
-    const b = Math.min(o.bezel, Math.min(w, h) / 2), key = [w, h, r, b].join("|");
-    if(key === lastKey) return;
-    lastKey = key;
-    if(filter) filter.remove();
-    filter = document.createElementNS(NS, "filter");
-    filter.setAttribute("id", id); filter.setAttribute("x", "0"); filter.setAttribute("y", "0");
-    filter.setAttribute("width", "100%"); filter.setAttribute("height", "100%");
-    filter.setAttribute("color-interpolation-filters", "sRGB");
-    const image = document.createElementNS(NS, "feImage");
-    image.setAttribute("href", displacementMap(w, h, r, b));
-    image.setAttribute("x", "0"); image.setAttribute("y", "0"); image.setAttribute("width", w); image.setAttribute("height", h);
-    image.setAttribute("preserveAspectRatio", "none"); image.setAttribute("result", "map");
-    const disp = document.createElementNS(NS, "feDisplacementMap");
-    disp.setAttribute("in", "SourceGraphic"); disp.setAttribute("in2", "map");
-    disp.setAttribute("scale", String(b * 1.9)); disp.setAttribute("xChannelSelector", "R"); disp.setAttribute("yChannelSelector", "G");
-    filter.append(image, disp); defs.appendChild(filter);
-    const value = `url(#${id}) blur(${o.blur}px) saturate(${o.saturate}) brightness(${o.brightness})`;
-    el.style.backdropFilter = value; el.style.webkitBackdropFilter = value;
-  }
-  const ro = new ResizeObserver(() => { clearTimeout(timer); timer = setTimeout(refresh, 60) });
-  ro.observe(el); refresh();
-  return {
-    supported: true,
-    refresh(){ lastKey = ""; refresh() },
-    destroy(){ ro.disconnect(); clearTimeout(timer); if(filter) filter.remove(); el.style.backdropFilter = ""; el.style.webkitBackdropFilter = "" }
-  };
-}
-
 // jemsmyeyesonly: TMDB catalogue + embed player
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p/";
@@ -590,6 +565,7 @@ function refreshSaveButtons(){
 const VIEWS = {
   movies:{title:"Movies", sub:"Popular right now. Filter by genre."},
   tv:{title:"TV Series", sub:"Popular series. Filter by genre."},
+  anime:{title:"Anime", sub:"Japanese animation, popular right now."},
   trending:{title:"Trending This Week", sub:"Movies and series everyone is watching."},
   watchlist:{title:"My List", sub:"Titles you saved on this device."},
   history:{title:"Recently Watched", sub:"Your latest plays on this device."}
@@ -612,7 +588,7 @@ function setView(view){
   $("homeView").classList.toggle("hidden", !home);
   $("browseView").classList.toggle("hidden", home);
   window.scrollTo(0, 0);
-  if(home){ loadHome(); return }
+  if(home){ renderContinue(); loadHome(); return }
   $("browseTitle").textContent = VIEWS[view].title;
   $("browseSub").textContent = VIEWS[view].sub;
   $("browseCount").classList.add("hidden");
@@ -621,12 +597,13 @@ function setView(view){
 }
 function showSetup(){
   $("trendingGrid").innerHTML = emptyState("Catalogue not connected", "Add TMDB_API_KEY in your Vercel project settings, then redeploy.", "", "");
-  $("popularSection").classList.add("hidden"); $("tvSection").classList.add("hidden");
+  $("popularSection").classList.add("hidden"); $("tvSection").classList.add("hidden"); $("hero").classList.add("hidden");
   $("trendingCount").textContent = "0";
 }
 async function loadHome(){
   if(!ready()){ showSetup(); return }
   $("popularSection").classList.remove("hidden"); $("tvSection").classList.remove("hidden");
+  if(!state.featured){ $("hero").classList.remove("hidden"); $("hero").classList.add("loading"); $("hero").innerHTML = "" }
   const token = ++state.token;
   ["trendingGrid","popularGrid","tvGrid"].forEach(id => $(id).innerHTML = skeletons(6));
   try{
@@ -636,12 +613,90 @@ async function loadHome(){
     const m = (movies.results || []).slice(0, 20).map(x => ({...x, media_type:"movie"}));
     const s = (tv.results || []).slice(0, 20).map(x => ({...x, media_type:"tv"}));
     renderCards("trendingGrid", t); renderCards("popularGrid", m); renderCards("tvGrid", s);
+    const pick = t.find(x => x.media_type === "movie" && x.backdrop_path && x.overview) || t.find(x => x.backdrop_path) || m.find(x => x.backdrop_path);
+    if(pick) renderHero(pick); else $("hero").classList.add("hidden");
     $("trendingCount").textContent = t.length; $("popularCount").textContent = m.length; $("tvCount").textContent = s.length;
   }catch(e){
     if(token !== state.token) return;
     $("trendingGrid").innerHTML = emptyState("Couldn't load the catalogue", e.message, "Try again", "retry");
-    $("popularSection").classList.add("hidden"); $("tvSection").classList.add("hidden");
+    $("popularSection").classList.add("hidden"); $("tvSection").classList.add("hidden"); $("hero").classList.add("hidden");
   }
+}
+/* Featured hero */
+const infoIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8v.1"/></svg>';
+const shareIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+function renderHero(item){
+  const hero = $("hero"), type = typeOf(item), name = titleOf(item);
+  state.featured = {...item, media_type: type};
+  const yr = year(item.release_date || item.first_air_date);
+  const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : "";
+  hero.classList.remove("loading", "hidden");
+  hero.innerHTML = `<div class="hero-bg" style="background-image:url('${image(item.backdrop_path, "w1280")}')"></div>
+    <div class="hero-body">
+      <div class="hero-tags"><span class="hero-badge">${type === "tv" ? "Featured series" : "Featured film"}</span>${rating ? `<span class="hero-score">&#9733; ${rating}</span>` : ""}</div>
+      <h1 class="hero-title">${escapeHtml(name)}</h1>
+      <p class="hero-meta">${[yr, type === "tv" ? "Series" : "Movie"].filter(Boolean).join(" &bull; ")}</p>
+      <p class="hero-desc">${escapeHtml(item.overview || "")}</p>
+      <div class="hero-actions">
+        <button class="hero-btn primary" data-action="hero-watch">${playIcon}Watch Now</button>
+        <button class="hero-btn" data-action="hero-details">${infoIcon}Details</button>
+        <button class="hero-btn" data-action="hero-share">${shareIcon}Share</button>
+      </div>
+    </div>`;
+}
+async function watchNow(id, type){
+  if(type === "tv"){ openDetails(id, type); return }
+  try{
+    const d = await api(`/movie/${id}`);
+    state.selected = {...d, media_type:"movie"};
+    play(id, "movie", null, null, titleOf(d), state.selected);
+  }catch(e){ toast(e.message) }
+}
+async function shareTitle(item){
+  const url = location.origin + location.pathname, title = titleOf(item);
+  try{
+    if(navigator.share){ await navigator.share({title, text: `Watch ${title}`, url}); return }
+    await navigator.clipboard.writeText(url); toast("Link copied");
+  }catch(e){ if(e && e.name !== "AbortError") toast("Couldn't share right now") }
+}
+
+/* Continue watching */
+function timeAgo(ts){
+  const m = Math.floor((Date.now() - (ts || 0)) / 60000);
+  if(!ts || m < 1) return "just now";
+  if(m < 60) return m + "m ago";
+  const h = Math.floor(m / 60); if(h < 24) return h + "h ago";
+  const d = Math.floor(h / 24); return d < 30 ? d + "d ago" : "a while ago";
+}
+function saveHistory(){ store.set("jems_history", JSON.stringify(state.history)) }
+function touchHistory(season, episode){
+  const e = state.history.find(x => x.id === activePlayback.id && x.type === activePlayback.type);
+  if(!e) return;
+  e.season = season; e.episode = episode; e.at = Date.now(); delete e.hidden; saveHistory();
+}
+function renderContinue(){
+  const sec = $("cwSection");
+  const list = state.history.filter(x => x.title && !x.hidden).slice(0, 12);
+  sec.classList.toggle("hidden", !list.length);
+  $("cwGrid").innerHTML = list.map(x => {
+    const tv = x.type === "tv";
+    const badge = tv ? `S${x.season || 1} &middot; E${x.episode || 1}` : "Movie";
+    const pic = x.backdrop ? image(x.backdrop, "w780") : image(x.poster, "w500");
+    return `<div class="cw-card" role="button" tabindex="0" data-cw-id="${x.id}" data-cw-type="${x.type}" aria-label="Continue ${escapeHtml(x.title)}">
+      <div class="cw-thumb"><img src="${pic}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fallbackPoster}'"/><span class="cw-badge">${badge}</span><button class="cw-remove" data-cw-remove="${x.id}" data-cw-type="${x.type}" aria-label="Remove ${escapeHtml(x.title)} from Continue Watching">&times;</button></div>
+      <p class="cw-title">${escapeHtml(x.title)}</p>
+      <p class="cw-sub">${tv ? "Series" : "Film"} &bull; ${timeAgo(x.at)}</p>
+    </div>`;
+  }).join("");
+}
+async function resumeWatching(id, type){
+  const e = state.history.find(x => x.id === id && x.type === type);
+  if(!e) return;
+  try{
+    const d = await api(`/${type}/${id}`);
+    state.selected = {...d, media_type:type};
+    play(id, type, type === "tv" ? (e.season || 1) : null, type === "tv" ? (e.episode || 1) : null, titleOf(d), state.selected);
+  }catch(err){ toast(err.message) }
 }
 async function loadBrowse(append){
   const view = state.view, token = ++state.token, grid = $("movieGrid"), wrap = $("loadMoreWrap"), badge = $("browseCount");
@@ -670,12 +725,13 @@ async function loadBrowse(append){
     let path, params = {page: state.page};
     if(view === "movies"){ path = state.genre ? "/discover/movie" : "/movie/popular"; if(state.genre){ params.with_genres = state.genre; params.sort_by = "popularity.desc" } }
     else if(view === "tv"){ path = state.genre ? "/discover/tv" : "/tv/popular"; if(state.genre){ params.with_genres = state.genre; params.sort_by = "popularity.desc" } }
+    else if(view === "anime"){ path = "/discover/tv"; params.with_genres = 16; params.with_origin_country = "JP"; params.sort_by = "popularity.desc" }
     else path = "/trending/all/week";
     const data = await api(path, params);
     if(token !== state.token) return;
     let results = (data.results || []).filter(x => x.media_type !== "person");
     if(view === "movies") results = results.map(x => ({...x, media_type:"movie"}));
-    if(view === "tv") results = results.map(x => ({...x, media_type:"tv"}));
+    if(view === "tv" || view === "anime") results = results.map(x => ({...x, media_type:"tv"}));
     state.totalPages = Math.min(data.total_pages || 1, 500);
     state.items = append ? [...state.items, ...results] : results;
     if(!results.length && !append) grid.innerHTML = emptyState("No titles found", "Try another genre.", "", "");
@@ -826,7 +882,7 @@ async function goToEpisode(season, episode){
   const eps = info.episodes;
   info.season = season;
   info.episode = episode === "last" ? eps[eps.length - 1].episode_number : (episode && eps.some(e => e.episode_number === episode) ? episode : eps[0].episode_number);
-  activePlayback.season = info.season; activePlayback.episode = info.episode;
+  activePlayback.season = info.season; activePlayback.episode = info.episode; touchHistory(info.season, info.episode);
   renderEpisodeBar(); renderPlayerMeta(); mountPlayer();
 }
 async function stepEpisode(dir){
@@ -849,8 +905,10 @@ async function play(id, type = "movie", season = null, episode = null, name = ""
   $("embedTitle").value = activePlayback.name;
   const sel = state.selected && state.selected.id === id ? state.selected : null;
   $("playerAmbient").style.backgroundImage = sel && sel.backdrop_path ? `url("${image(sel.backdrop_path, "w780")}")` : "none";
-  state.history = [{id, type}, ...state.history.filter(x => !(x.id === id && x.type === type))].slice(0, 24);
-  store.set("jems_history", JSON.stringify(state.history));
+  const meta = src && src.id === id ? {title: titleOf(src), backdrop: src.backdrop_path || "", poster: src.poster_path || ""} : {};
+  const prev = state.history.find(x => x.id === id && x.type === type) || {};
+  state.history = [{id, type, ...prev, ...meta, season: type === "tv" ? (season || prev.season || 1) : null, episode: type === "tv" ? (episode || prev.episode || 1) : null, at: Date.now(), hidden: false}, ...state.history.filter(x => !(x.id === id && x.type === type))].slice(0, 24);
+  saveHistory();
   tvInfo = null;
   if(type === "tv" && src){
     const seasons = (src.seasons || []).filter(x => x.season_number > 0).map(x => x.season_number);
@@ -885,6 +943,7 @@ function syncFullscreen(){
 function closePlayer(){
   if(fsElement()) toggleFullscreen();
   closeModal("playerModal"); $("playerStage").innerHTML = ""; tvInfo = null;
+  if(state.view === "home") renderContinue();
 }
 
 /* Modals and panels */
@@ -912,6 +971,15 @@ document.addEventListener("click", e => {
   const t = e.target;
   const saveBtn = t.closest(".save");
   if(saveBtn){ e.stopPropagation(); toggleWatchlist(Number(saveBtn.dataset.id), saveBtn.dataset.type); return }
+  const rm = t.closest("[data-cw-remove]");
+  if(rm){
+    e.stopPropagation();
+    const en = state.history.find(x => x.id === Number(rm.dataset.cwRemove) && x.type === rm.dataset.cwType);
+    if(en){ en.hidden = true; saveHistory(); renderContinue(); toast("Removed from Continue Watching") }
+    return;
+  }
+  const cw = t.closest(".cw-card");
+  if(cw){ resumeWatching(Number(cw.dataset.cwId), cw.dataset.cwType); return }
   const cardEl = t.closest(".card[data-id]");
   if(cardEl){ openDetails(Number(cardEl.dataset.id), cardEl.dataset.type); return }
   const sr = t.closest(".search-result");
@@ -926,6 +994,10 @@ document.addEventListener("click", e => {
   if(act){
     if(act.dataset.action === "retry") setView(state.view);
     else if(act.dataset.action === "go-movies") setView("movies");
+    else if(act.dataset.action === "view-history") setView("history");
+    else if(state.featured && act.dataset.action === "hero-watch") watchNow(state.featured.id, state.featured.media_type);
+    else if(state.featured && act.dataset.action === "hero-details") openDetails(state.featured.id, state.featured.media_type);
+    else if(state.featured && act.dataset.action === "hero-share") shareTitle(state.featured);
     return;
   }
   if(t.closest("[data-close='detail']")) closeModal("detailModal");
@@ -940,6 +1012,9 @@ document.addEventListener("keydown", e => {
   }
   if((e.key === "f" || e.key === "F") && !e.ctrlKey && !e.metaKey && !e.altKey && !$("playerModal").classList.contains("hidden") && !/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)){
     e.preventDefault(); toggleFullscreen();
+  }
+  if((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("cw-card")){
+    e.preventDefault(); resumeWatching(Number(e.target.dataset.cwId), e.target.dataset.cwType);
   }
   if((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("card")){
     e.preventDefault(); openDetails(Number(e.target.dataset.id), e.target.dataset.type);
@@ -967,8 +1042,6 @@ $("serverGroup").onclick = e => {
 $("applyEmbedOptions").onclick = applyPlaybackOptions;
 $("loadMore").onclick = () => { state.page++; loadBrowse(true) };
 
-liquidGlass($("tabbar"), {bezel:20});
-liquidGlass($("toast"), {bezel:14});
 /* First-visit welcome note: shows once, then remembers in this browser. */
 function closeWelcome(){ store.set("jems_welcome_seen", "1"); closeModal("welcomeModal") }
 function showWelcomeOnce(){
